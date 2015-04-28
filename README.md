@@ -1,12 +1,12 @@
 # cyclejs-create-streams-group
-Utility for CycleJS framework for reducing boilerplate when creating groups of streams.
+Utility for Cycle.js framework for reducing boilerplate when creating groups of streams.
 
 ## Why may I need it?
-Usually in CycleJS application or component you want to create more than one stream, especially for intent and model parts. It's 100% possible to do it with pure JS, but it requires a lot of boilerplate code. This utility covers common case and lets creating complicated programs easily.
+Usually in Cycle.js application or component you want to create more than one stream, especially for intent and model parts. It's 100% possible to do it with pure JS, but it requires a lot of boilerplate code. This utility covers common case and lets creating complicated programs easily.
 
 ## Example usage
 
-Let's say, you want to create simple application, that allows to add two numbers. With pure JS and Cycle you can do it like that:
+Let's say, you want to create simple application, that allows to add two numbers. With pure JS and Cycle.js you can do it like that:
 
 ```javascript
 import { createStream, render, h, Rx } from 'cyclejs';
@@ -72,4 +72,65 @@ vtree$.inject(a$, b$, c$);
 interaction$.inject(vtree$);
 changeA$.inject(interaction$);
 changeB$.inject(interaction$);
+```
+
+Seems easy for now, but when streams number grows, code may become a bit messy and amount of boilerplate will grow proportionally. With `createStreamsGroup` you can create batch of streams from plain functions. Function parameters are used to create automatic injection function. Each stream in group has access to other streams in the same group, as well as to streams from groups injected by `inject` method of the group.
+
+```javascript
+import { createStream, render, h, Rx } from 'cyclejs';
+import createStreamsGroup from 'cyclejs-create-streams-group';
+
+let model = createStreamsGroup({
+	a: (changeA$) => changeA$
+	   .map((value) => parseInt(value, 10))
+	   .filter((value) => !isNaN(value))
+	   .distinctUntilChanged()
+	b: (changeB$) => changeB$
+	   .map((value) => parseInt(value, 10))
+	   .filter((value) => !isNaN(value))
+	   .distinctUntilChanged(),
+	c: (a$, b$) => Rx.Observable.combineLatest(
+		  a$,
+		  b$,
+		  (a, b) => a + b
+		)
+});
+
+let intent = createStreamsGroup({
+	changeA$: (interaction$) => interaction$
+		.choose('#a', 'input')
+		.map(({ target }) => target.value),
+	changeB$: (interaction$) => interaction$
+		.choose('#b', 'input')
+		.map(({ target }) => target.value)
+});
+
+let view = createStreamsGroup({
+	vtree$: (a$, b$, c$) => Rx.Observable.combineLatest(
+	a$, b$, c$,
+	(a, b, c) =>
+		h('form',
+			h('fieldset', [
+				h('legend', 'Add two numbers'),
+				h('input#a', {
+					type: 'number',
+					value: a,
+				}),
+				h('input#b', {
+					type: 'number',
+					value: b,
+				}),
+				h('output', {
+					value: c,
+					htmlFor: 'a,b'
+				})
+			])
+		)
+	),
+	interaction$: (vtree$) => render(vtree$, document.body).interaction$
+});
+
+model.inject(intent);
+view.inject(model);
+intent.inject(view);
 ```
