@@ -32,7 +32,7 @@ let c = createStream((a$, b$) => Rx.Observable.combineLatest(
 let vtree$ = createStream((a$, b$, c$) =>
   Rx.Observable.combineLatest(a$, b$, c$, (a, b, c) =>
     h('form',
-      h('fieldset`, [
+      h('fieldset', [
         h('legend', 'Add two numbers'),
         h('input#a', {
           type: 'number',
