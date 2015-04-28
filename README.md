@@ -1,4 +1,4 @@
-# cyclejs-create-streams-group
+# cyclejs-group
 Utility for the [Cycle.js framework](https://github.com/staltz/cycle) for reducing boilerplate when creating groups of streams.
 
 ## Why may I need it?
