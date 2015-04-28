@@ -14,12 +14,14 @@ import { createStream, render, h, Rx } from 'cyclejs';
 let a = createStream((changeA$) => changeA$
    .map((value) => parseInt(value, 10))
    .filter((value) => !isNaN(value))
+   .startWith(1)
    .distinctUntilChanged()
 );
 
 let b = createStream((changeB$) => changeB$
    .map((value) => parseInt(value, 10))
    .filter((value) => !isNaN(value))
+   .startWith(1)
    .distinctUntilChanged()
 );
 
@@ -82,18 +84,20 @@ import createStreamsGroup from 'cyclejs-create-streams-group';
 
 let model = createStreamsGroup({
 	a: (changeA$) => changeA$
-	   .map((value) => parseInt(value, 10))
-	   .filter((value) => !isNaN(value))
-	   .distinctUntilChanged()
+	        .map((value) => parseInt(value, 10))
+	        .filter((value) => !isNaN(value))
+   	        .startWith(1)
+	        .distinctUntilChanged()
 	b: (changeB$) => changeB$
-	   .map((value) => parseInt(value, 10))
-	   .filter((value) => !isNaN(value))
-	   .distinctUntilChanged(),
+	        .map((value) => parseInt(value, 10))
+		.filter((value) => !isNaN(value))
+                .startWith(1)
+	        .distinctUntilChanged(),
 	c: (a$, b$) => Rx.Observable.combineLatest(
-		  a$,
-		  b$,
-		  (a, b) => a + b
-		)
+		a$,
+		b$,
+		(a, b) => a + b
+	)
 });
 
 let intent = createStreamsGroup({
