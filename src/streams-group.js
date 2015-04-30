@@ -21,19 +21,35 @@ function mapValues(obj, map) {
   return result;
 }
 
+function mergeObject(acc, obj) {
+  for (let key in obj) { if (obj.hasOwnProperty(key)) {
+    acc[key] = obj[key];
+  }}
+  return acc;
+}
+
 function makeInjectFn(streamsWithDeps) {
-  return function inject(inputObj) {
+  return function inject(...inputObjects) {
+    let combinedInputObject = inputObjects.length === 1 ?
+      inputObjects[0] :
+      inputObjects.reduce(mergeObject, {});
     for (let key in streamsWithDeps) { if (streamsWithDeps.hasOwnProperty(key)) {
       let {dependencies, stream} = streamsWithDeps[key];
       let streamDependencies = dependencies.map((dependencyName) => {
-        if (!inputObj.hasOwnProperty(dependencyName)) {
+        if (!combinedInputObject.hasOwnProperty(dependencyName)) {
           throw new Error(`Dependency "${dependencyName}" is not available!"`);
         }
-        return inputObj[dependencyName];
+        return combinedInputObject[dependencyName];
       });
       stream.inject.apply(stream, streamDependencies);
     }}
-    return inputObj;
+    if (inputObjects.length === 1) {
+      return inputObjects[0];
+    } else if (inputObjects.length > 1) {
+      return inputObjects;
+    } else {
+      return null;
+    }
   };
 }
 

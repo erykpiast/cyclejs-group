@@ -128,5 +128,25 @@ describe('Groups', function () {
       assert.strictEqual(outputs.asd$, inputs.asd$);
       assert.strictEqual(outputs.lol$, inputs.lol$);
     });
+
+    it('should return an array when given multiple inputs', function () {
+      let group = createStreamsGroup({
+        foo$: (asd$) => asd$.map(x => 3 * x),
+        bar$: (lol$) => lol$.map(x => 5 * x)
+      });
+      let input1 = {
+        asd$: Rx.Observable.just(2)
+      };
+      let input2 = {
+        lol$: Rx.Observable.just(4)
+      };
+      let outputs = group.inject(input1, input2);
+      assert.strictEqual(Array.isArray(outputs), true);
+      assert.strictEqual(outputs.length, 2);
+      assert.strictEqual(typeof outputs[0].asd$.subscribe, 'function');
+      assert.strictEqual(typeof outputs[1].lol$.subscribe, 'function');
+      assert.strictEqual(outputs[0].asd$, input1.asd$);
+      assert.strictEqual(outputs[1].lol$, input2.lol$);
+    });
   });
 });
