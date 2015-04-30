@@ -7,14 +7,14 @@ import getParametersNames from 'get-parameter-names';
 
 
 function _makeInjectFn(streamWithDependencies) {
-    return function inject(...inputObjs) {
+    return function inject(...inputObjects) {
         let combinedInputObject = inputObjects.length === 1 ?
             inputObjects[0] :
             inputObjects.reduce(mergeObjects, {});
         
         for(let [ , { dependencies, stream } ] of Object.entries(streamWithDependencies)) {
             let streamDependencies = dependencies.map((dependencyName) => {
-                if(!inputObj.hasOwnProperty(dependencyName)) {
+                if(!combinedInputObject.hasOwnProperty(dependencyName)) {
                     throw new Error(`Dependency "${dependencyName}" is not available!`);
                 }
                 
