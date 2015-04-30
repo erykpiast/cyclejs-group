@@ -76,7 +76,7 @@ changeA$.inject(interaction$);
 changeB$.inject(interaction$);
 ```
 
-Seems easy for now, but when the number of streams grows, the amount of boilerplate will grow proportionally. With `createStreamsGroup` you can achieve the same effect in a more compact way and create a batch of streams from plain functions. Each stream in the group has access to other streams in the same group, as well as to streams from groups injected by the `inject` method of the group. Injection connections are automatically detected based on the names of function parameters and keys of the group object.
+Seems easy for now, but when streams number grows, amount of boilerplate will grow proportionally. With `createStreamsGroup` you can achieve the same effect in more compact way and create batch of streams from plain functions. Each stream in the group will be injected input streams given by the `inject` method of the group, where this connection is detected based on names of function parameters and keys of the group object.
 
 ```javascript
 import { createStream, render, h, Rx } from 'cyclejs';
