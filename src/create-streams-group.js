@@ -1,73 +1,74 @@
+'use strict';
+
 import { createStream } from 'cyclejs';
-import each from 'foreach';
 import mapValues from 'map-values';
 import getParametersNames from 'get-parameter-names';
 
 
+function _makeInjectFn(streamWithDependencies) {
+    return function inject(inputObj) {
+        for(let [ , { dependencies, stream } ] of Object.entries(streamWithDependencies)) {
+            let streamDependencies = dependencies.map((dependencyName) => {
+                if(!inputObj.hasOwnProperty(dependencyName)) {
+                    throw new Error(`Dependency "${dependencyName}" is not available!`);
+                }
+                
+                return inputObj[dependencyName];
+            });
+
+            stream.inject(...streamDependencies);
+        }
+        
+        return inputObj;
+    };
+}
+
+
+function _makeDisposeFn(group) {
+    return function dispose() {
+        for (let [ , stream ] of Object.entries(group)) {
+            stream.dispose();
+        }
+    };
+}
+
 export default function createStreamsGroup(definition) {
-    let streams = ('function' === typeof definition) ?
+    let streamsDefs = ('function' === typeof definition) ?
         definition() :
         definition;
 
-    if(('object' !== typeof streams) || (streams === null)) {
-        throw new TypeError('streams group has to be an object');
+    if(('object' !== typeof streamsDefs) ||
+        (streamsDefs === null) ||
+        Array.isArray(streamsDefs)
+    ) {
+        throw new TypeError('Cycle Streams Group must be an object.');
+    }
+    
+    if (this instanceof createStreamsGroup) { // jshint ignore:line
+        throw new Error('Cannot use `new` operator on `createStreamsGroup()`, it is not a constructor.');
     }
 
-    streams = mapValues(streams, (streamFn) => ({
-        deps: getParametersNames(streamFn),
+    let streamsWithDeps = mapValues(streamsDefs, (streamFn) => ({
+        dependencies: getParametersNames(streamFn),
         stream: createStream(streamFn)
     }));
-
-    let inject = function() {
-        // merge all injectable collections, including own ones
-        let toInject = mapValues(streams, ({ stream }) => stream);
-
-        for(var i = 0, maxi = arguments.length; i < maxi; i++) {
-            each(arguments[i], (injectable, injectableName) => {
-                if(toInject.hasOwnProperty(injectableName)) {
-                    throw new Error(`injectable "${injectableName}" is duplicated!`);
-                }
-
-                toInject[injectableName] = injectable;
-            });
-        }
-
-        each(streams, ({ deps, stream }) => {
-            let streamDeps = deps.map((depName) => {
-                if(!toInject.hasOwnProperty(depName)) {
-                    throw new Error(`dependency "${depName}" is not available!"`);
-                }
-
-                /*
-                if('function' === typeof toInject[depName].tap) {
-                    return toInject[depName]
-                        .tap(console.log.bind(console, depName));
-                } else if('function' === typeof toInject[depName].choose) {
-                    return {
-                        choose: (selector, event) =>
-                            toInject[depName]
-                                .choose(selector, event)
-                                .tap(console.log.bind(console, `${selector}@${event}`))
-                    };
-                } else {
-                    return toInject[depName];
-                }
-                /*/
-                return toInject[depName];
-                //*/
-            });
-
-            stream.inject.apply(stream, streamDeps);
-        });
-    };
-
-    let exports = mapValues(streams, ({ stream }) => stream);
-    // add `inject` as not enumerable property to make it not visible for `each` function
-    Object.defineProperty(exports, 'inject', {
+    
+    let group = mapValues(streamsWithDeps, ({ stream }) => stream);
+    
+    // add `inject` and `dispose` as not enumerable properties to make them
+    // not visible for `each` function
+    Object.defineProperty(group, 'inject', {
         enumerable: false,
-        value: inject
+        value: _makeInjectFn(streamsWithDeps)
     });
-    Object.freeze(exports);
+    
+    Object.defineProperty(group, 'dispose', {
+        enumerable: false,
+        value: _makeDisposeFn(group)
+    });
+    
+    Object.freeze(group);
 
-    return exports;
+    return group;
 }
+
