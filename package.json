@@ -20,7 +20,8 @@
     "cyclejs": "^0.20.4",
     "foreach": "^2.0.5",
     "get-parameter-names": "^0.2.0",
-    "map-values": "^1.0.1"
+    "map-values": "^1.0.1",
+    "merge-object": "^1.0.0"
   },
   "devDependencies": {
     "babel": "~5.1",

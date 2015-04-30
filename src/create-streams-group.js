@@ -2,24 +2,35 @@
 
 import { createStream } from 'cyclejs';
 import mapValues from 'map-values';
+import mergeObjects from 'merge-object';
 import getParametersNames from 'get-parameter-names';
 
 
 function _makeInjectFn(streamWithDependencies) {
-    return function inject(inputObj) {
+    return function inject(...inputObjs) {
+        let combinedInputObject = inputObjects.length === 1 ?
+            inputObjects[0] :
+            inputObjects.reduce(mergeObjects, {});
+        
         for(let [ , { dependencies, stream } ] of Object.entries(streamWithDependencies)) {
             let streamDependencies = dependencies.map((dependencyName) => {
                 if(!inputObj.hasOwnProperty(dependencyName)) {
                     throw new Error(`Dependency "${dependencyName}" is not available!`);
                 }
                 
-                return inputObj[dependencyName];
+                return combinedInputObject[dependencyName];
             });
 
             stream.inject(...streamDependencies);
         }
         
-        return inputObj;
+        if (inputObjects.length === 1) {
+            return inputObjects[0];
+        } else if (inputObjects.length > 1) {
+            return inputObjects;
+        } else {
+            return null;
+        }
     };
 }
 
