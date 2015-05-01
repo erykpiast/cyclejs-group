@@ -17,6 +17,7 @@
   ],
   "main": "dist/create-streams-group.js",
   "dependencies": {
+    "babel": "^5.2.6",
     "cyclejs": "^0.20.4",
     "foreach": "^2.0.5",
     "get-parameter-names": "^0.2.0",
@@ -24,7 +25,7 @@
     "merge-object": "^1.0.0"
   },
   "devDependencies": {
-    "babel": "~5.1",
+    "babel": "~5.2",
     "babelify": "~6.0",
     "browserify": "~9.0",
     "jshint": "~2.7",
