@@ -11,6 +11,8 @@ Object.defineProperty(exports, '__esModule', {
 });
 exports['default'] = createStreamsGroup;
 
+require('babel/polyfill');
+
 var _createStream = require('cyclejs');
 
 var _mapValues = require('map-values');
