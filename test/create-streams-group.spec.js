@@ -149,7 +149,7 @@ suite('Groups', () => {
         });
         
         
-        it('should return an array when given multiple inputs', () => {
+        test('should return an array when given multiple inputs', () => {
             let group = createStreamsGroup({
                 foo$: (asd$) => asd$.map(x => 3 * x),
                 bar$: (lol$) => lol$.map(x => 5 * x)
