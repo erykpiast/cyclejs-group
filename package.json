@@ -43,7 +43,7 @@
   "scripts": {
     "jshint": "jshint src/",
     "jscs": "jscs src/",
-    "mocha": "mocha --compilers js:babel/register  --reporter spec --ui tdd test",
+    "mocha": "mocha --compilers js:babel/register --reporter spec --ui tdd test",
     "test": "npm run jshint && npm run mocha",
     "browserify": "browserify src/create-streams-group.js -t babelify --standalone createStreamsGroup --outfile dist/cyclejs-group.js",
     "uglify": "uglifyjs dist/cycle.js -o dist/cycle.min.js",

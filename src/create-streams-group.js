@@ -1,6 +1,6 @@
 'use strict';
 
-import 'core-js/library/fn/object/entries';
+import 'core-js/fn/object/entries';
 
 import { createStream } from 'cyclejs';
 import mapValues from 'map-values';
