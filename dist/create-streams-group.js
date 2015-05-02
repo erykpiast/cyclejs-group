@@ -12,7 +12,7 @@ var _toConsumableArray = function (arr) { if (Array.isArray(arr)) { for (var i =
 
 exports['default'] = createStreamsGroup;
 
-require('core-js/library/fn/object/entries');
+require('core-js/fn/object/entries');
 
 var _createStream = require('cyclejs');
 
