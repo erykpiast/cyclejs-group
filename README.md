@@ -6,7 +6,7 @@ Usually ina  Cycle.js application or component you want to create more than one 
 
 ## Example usage
 
-Let's say, you want to create simple application, that allows you to add two numbers. With pure JS and Cycle.js you can do it like this:
+Let's say, you want to create simple application, that allows you to add two numbers. With pure Cycle.js you can do it like this:
 
 ```javascript
 import { createStream, render, h, Rx } from 'cyclejs';
@@ -76,37 +76,37 @@ changeA$.inject(interaction$);
 changeB$.inject(interaction$);
 ```
 
-Seems easy for now, but when streams number grows, amount of boilerplate will grow proportionally. With `createStreamsGroup` you can achieve the same effect in more compact way and create batch of streams from plain functions. Each stream in the group will be injected input streams given by the `inject` method of the group, where this connection is detected based on names of function parameters and keys of the group object.
+Seems easy for now, but when streams number grows, amount of boilerplate will grow proportionally. With `createStreamsGroup` you can achieve the same effect in more compact way and create batch of streams from plain functions. Thanks to `inject` method of the group, you can make streams form one group available for streams from another one. Connection is detected based on names of function parameters and keys of the group object.
 
 ```javascript
 import { createStream, render, h, Rx } from 'cyclejs';
 import createStreamsGroup from 'cyclejs-create-streams-group';
 
 let model = createStreamsGroup({
-  a$: (changeA$) => changeA$
+   a$: (changeA$) => changeA$
       .map(value => parseInt(value, 10))
       .filter(value => !isNaN(value))
       .startWith(1)
       .distinctUntilChanged()
-  b$: (changeB$) => changeB$
+   b$: (changeB$) => changeB$
       .map(value => parseInt(value, 10))
       .filter(value => !isNaN(value))
       .startWith(1)
       .distinctUntilChanged(),
-  c$: (a$, b$) => Rx.Observable.combineLatest(
-    a$,
-    b$,
-    (a, b) => a + b
+   c$: (a$, b$) => Rx.Observable.combineLatest(
+      a$,
+      b$,
+      (a, b) => a + b
   )
 });
 
 let intent = createStreamsGroup({
-  changeA$: (interaction$) => interaction$
-    .choose('#a', 'input')
-    .map(({ target }) => target.value),
-  changeB$: (interaction$) => interaction$
-    .choose('#b', 'input')
-    .map(({ target }) => target.value)
+   changeA$: (interaction$) => interaction$
+      .choose('#a', 'input')
+      .map(({ target }) => target.value),
+   changeB$: (interaction$) => interaction$
+      .choose('#b', 'input')
+      .map(({ target }) => target.value)
 });
 
 let view = createStreamsGroup({
@@ -137,7 +137,7 @@ let user = createStreamsGroup({
   interaction$: (vtree$) => render(vtree$, document.body).interaction$
 });
 
-model.inject(intent);
+model.inject(intent, model); // self-injection to make a$ and b$ available for c$
 view.inject(model);
 user.inject(view);
 intent.inject(user);
