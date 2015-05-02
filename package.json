@@ -17,7 +17,7 @@
   ],
   "main": "dist/create-streams-group.js",
   "dependencies": {
-    "babel": "^5.2.6",
+    "core-js": "^0.9.6",
     "foreach": "^2.0.5",
     "get-parameter-names": "^0.2.0",
     "map-values": "^1.0.1",
