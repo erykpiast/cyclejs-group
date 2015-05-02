@@ -2,7 +2,7 @@
 Utility for the [Cycle.js framework](https://github.com/staltz/cycle) for reducing boilerplate when creating groups of streams.
 
 ## Why may I need it?
-Usually ina  Cycle.js application or component you want to create more than one stream, especially for intent and model parts. It's 100% possible to do it with pure JS, but it requires a lot of boilerplate code. This utility covers common case and lets creating complicated programs easily.
+Usually in a Cycle.js application or component you want to create more than one stream, especially for intent and model parts. It's 100% possible to do it with pure JS, but it requires a lot of boilerplate code. This utility covers common case and lets creating complicated programs easily.
 
 ## Example usage
 
@@ -80,9 +80,9 @@ Seems easy for now, but when streams number grows, amount of boilerplate will gr
 
 ```javascript
 import { createStream, render, h, Rx } from 'cyclejs';
-import createStreamsGroup from 'cyclejs-create-streams-group';
+import createGroup from 'cyclejs-group';
 
-let model = createStreamsGroup({
+let model = createGroup({
    a$: (changeA$) => changeA$
       .map(value => parseInt(value, 10))
       .filter(value => !isNaN(value))
@@ -100,7 +100,7 @@ let model = createStreamsGroup({
   )
 });
 
-let intent = createStreamsGroup({
+let intent = createGroup({
    changeA$: (interaction$) => interaction$
       .choose('#a', 'input')
       .map(({ target }) => target.value),
@@ -109,7 +109,7 @@ let intent = createStreamsGroup({
       .map(({ target }) => target.value)
 });
 
-let view = createStreamsGroup({
+let view = createGroup({
   vtree$: (a$, b$, c$) => Rx.Observable.combineLatest(
   a$, b$, c$,
   (a, b, c) =>
@@ -133,7 +133,7 @@ let view = createStreamsGroup({
   )
 });
 
-let user = createStreamsGroup({
+let user = createGroup({
   interaction$: (vtree$) => render(vtree$, document.body).interaction$
 });
 
