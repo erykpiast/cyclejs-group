@@ -57,7 +57,7 @@ export default function createGroup(definition) {
         throw new TypeError('Cycle Streams Group must be an object.');
     }
 
-    if (this instanceof createStreamsGroup) { // jshint ignore:line
+    if (this instanceof createGroup) { // jshint ignore:line
         throw new Error('Cannot use `new` operator on `createStreamsGroup()`, it is not a constructor.');
     }
 
