@@ -12,57 +12,56 @@ Let's say, you want to create simple application, that allows you to add two num
 import { createStream, render, h, Rx } from 'cyclejs';
 
 let a$ = createStream((changeA$) => changeA$
-   .map(value => parseInt(value, 10))
-   .filter(value => !isNaN(value))
-   .startWith(1)
-   .distinctUntilChanged()
+    .map(value => parseInt(value, 10))
+    .filter(value => !isNaN(value))
+    .startWith(1)
+    .distinctUntilChanged()
 );
 
 let b$ = createStream((changeB$) => changeB$
-   .map(value => parseInt(value, 10))
-   .filter(value => !isNaN(value))
-   .startWith(1)
-   .distinctUntilChanged()
+    .map(value => parseInt(value, 10))
+    .filter(value => !isNaN(value))
+    .startWith(1)
+    .distinctUntilChanged()
 );
 
 let c = createStream((a$, b$) => Rx.Observable.combineLatest(
-  a$,
-  b$,
-  (a, b) => a + b
+    a$, b$,
+    (a, b) => a + b
 ));
 
 let vtree$ = createStream((a$, b$, c$) =>
-  Rx.Observable.combineLatest(a$, b$, c$, (a, b, c) =>
-    h('form',
-      h('fieldset', [
-        h('legend', 'Add two numbers'),
-        h('input#a', {
-          type: 'number',
-          value: a,
-        }),
-        h('input#b', {
-          type: 'number',
-          value: b,
-        }),
-        h('output', {
-          value: c,
-          htmlFor: 'a,b'
-        })
-      ])
+    Rx.Observable.combineLatest(a$, b$, c$, (a, b, c) =>
+        h('form',
+            h('fieldset', [
+                h('legend', 'Add two numbers'),
+                h('input#a', {
+                    type: 'number',
+                    value: a,
+                }),
+                h('input#b', {
+                    type: 'number',
+                    value: b,
+                }),
+                h('output', {
+                    value: c,
+                    htmlFor: 'a,b'
+                })
+            ])
+        )
     )
-  )
 );
 
 let changeA$ = createStream((interaction$) =>
-  interaction$
-    .choose('#a', 'input')
-    .map(({ target }) => target.value)
+     interaction$
+        .choose('#a', 'input')
+        .map(({ target }) => target.value)
 );
 
 let changeA$ = createStream((interaction$) =>
-  interaction$
-    .choose('#b', 'input')
-    .map(({ target }) => target.value)
+    interaction$
+        .choose('#b', 'input')
+        .map(({ target }) => target.value)
 );
 
 let interaction$ = createStream((vtree$) => render(vtree$, document.body).interaction$);
