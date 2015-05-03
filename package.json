@@ -15,7 +15,7 @@
     "streams",
     "group"
   ],
-  "main": "dist/create-streams-group.js",
+  "main": "dist/create-group.js",
   "dependencies": {
     "core-js": "^0.9.6",
     "foreach": "^2.0.5",
@@ -45,8 +45,8 @@
     "jscs": "jscs src/",
     "mocha": "mocha --compilers js:babel/register --reporter spec --ui tdd test",
     "test": "npm run jshint && npm run mocha",
-    "browserify": "browserify src/create-streams-group.js -t babelify --standalone createStreamsGroup --outfile dist/cyclejs-group.js",
-    "uglify": "uglifyjs dist/cycle.js -o dist/cycle.min.js",
+    "browserify": "browserify src/create-group.js -t babelify --standalone createGroup --outfile dist/cyclejs-group.js",
+    "uglify": "uglifyjs dist/cyclejs-group.js -o dist/cyclejs-group.min.js",
     "dist": "npm run browserify && npm run uglify",
     "precompile": "rm -rf dist/ && mkdir -p dist",
     "compile": "babel -d dist/ src/",

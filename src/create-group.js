@@ -45,7 +45,7 @@ function _makeDisposeFn(group) {
     };
 }
 
-export default function createStreamsGroup(definition) {
+export default function createGroup(definition) {
     let streamsDefs = ('function' === typeof definition) ?
         definition() :
         definition;
