@@ -2,7 +2,7 @@
 Utility for the [Cycle.js framework](https://github.com/staltz/cycle) for reducing boilerplate when creating groups of streams.
 
 ## Why may I need it?
-Usually in a Cycle.js application or component you want to create more than one stream, especially for intent and model parts. It's 100% possible to do it with pure JS, but it requires a lot of boilerplate code. This utility covers common case and lets creating complicated programs easily.
+Usually in a Cycle.js application or component you want to create more than one stream, especially for intent and model parts. It's 100% possible to do it with pure JS, but it requires a lot of boilerplate code. This utility covers common case and makes creating complicated programs easier.
 
 ## Example usage
 
