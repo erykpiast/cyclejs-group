@@ -71,7 +71,7 @@ suite('Groups', () => {
         });
         group.inject(inputs);
     });
-
+    
     test('should be injectable with another Group', (done) => {
         let group1 = createGroup({
             foo$: (asd$) => asd$.map(x => 3 * x),
@@ -79,31 +79,38 @@ suite('Groups', () => {
         });
 
         let group2 = createGroup({
-            asd$: () => Rx.Observable.just(2),
-            lol$: () => Rx.Observable.just(4)
+            asd$: () => Rx.Observable.just(2).delay(1),
+            lol$: () => Rx.Observable.just(4).delay(1)
         });
 
-        Rx.Observable.combineLatest(group1.foo$, group1.bar$, (foo, bar) => [foo, bar])
-            .subscribe(([foo, bar]) => {
-                assert.strictEqual(foo, 6);
-                assert.strictEqual(bar, 20);
-                done();
-            });
+        Rx.Observable.combineLatest(
+            group1.foo$, group1.bar$,
+            (foo, bar) => [foo, bar]
+        ).subscribe(([foo, bar]) => {
+            assert.strictEqual(foo, 6);
+            assert.strictEqual(bar, 20);
+            
+            done();
+        });
 
         group1.inject(group2);
     });
 
     test('should be circularly injectable with another Group', (done) => {
         let group1 = createGroup({
-            foo$: (asd$) => asd$.map(x => 3 * x).delay(80).shareReplay(1)
+            foo$: (asd$) => asd$
+                .map(x => 3 * x)
+                .startWith(3)
+                .delay(1)
         });
 
         let group2 = createGroup({
-            asd$: (foo$) => foo$.map(x => 5 * x).delay(100).startWith(2)
+            asd$: (foo$) => foo$
+                .map(x => 5 * x)
         });
 
-        group2.asd$.elementAt(2).subscribe(x => {
-            assert.strictEqual(x, 2 * 3 * 5 * 3 * 5);
+        group2.asd$.elementAt(1).subscribe(x => {
+            assert.strictEqual(x, 3 * 5 * 3 * 5);
 
             done();
 
@@ -124,7 +131,7 @@ suite('Groups', () => {
             assert.notStrictEqual(x, 30);
         });
 
-        setTimeout(() => { group.dispose(); }, 250);
+        setTimeout(() => { group.dispose(); }, 200);
         setTimeout(() => { done(); }, 400);
     });
 

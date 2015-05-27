@@ -3,32 +3,31 @@
 Object.defineProperty(exports, '__esModule', {
     value: true
 });
-
-var _interopRequireDefault = function (obj) { return obj && obj.__esModule ? obj : { 'default': obj }; };
-
-var _slicedToArray = function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } };
-
-var _toConsumableArray = function (arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } };
-
 exports['default'] = createGroup;
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _slicedToArray(arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
 
 require('core-js/fn/object/entries');
 
-var _createStream = require('cyclejs');
+var _cyclejsStream = require('cyclejs-stream');
+
+var _cyclejsStream2 = _interopRequireDefault(_cyclejsStream);
 
 var _mapValues = require('map-values');
 
 var _mapValues2 = _interopRequireDefault(_mapValues);
 
-var _mergeObjects = require('merge-object');
+var _mergeObject = require('merge-object');
 
-var _mergeObjects2 = _interopRequireDefault(_mergeObjects);
+var _mergeObject2 = _interopRequireDefault(_mergeObject);
 
-var _getParametersNames = require('get-parameter-names');
+var _getParameterNames = require('get-parameter-names');
 
-var _getParametersNames2 = _interopRequireDefault(_getParametersNames);
-
-'use strict';
+var _getParameterNames2 = _interopRequireDefault(_getParameterNames);
 
 function _makeInjectFn(streamWithDependencies) {
     return function inject() {
@@ -36,7 +35,7 @@ function _makeInjectFn(streamWithDependencies) {
             inputObjects[_key] = arguments[_key];
         }
 
-        var combinedInputObject = inputObjects.length === 1 ? inputObjects[0] : inputObjects.reduce(_mergeObjects2['default'], {});
+        var combinedInputObject = inputObjects.length === 1 ? inputObjects[0] : inputObjects.reduce(_mergeObject2['default'], {});
 
         var _iteratorNormalCompletion = true;
         var _didIteratorError = false;
@@ -58,6 +57,7 @@ function _makeInjectFn(streamWithDependencies) {
                     return combinedInputObject[dependencyName];
                 });
 
+                debugger;
                 stream.inject.apply(stream, _toConsumableArray(streamDependencies));
             }
         } catch (err) {
@@ -128,14 +128,14 @@ function createGroup(definition) {
         throw new Error('Cannot use `new` operator on `createStreamsGroup()`, it is not a constructor.');
     }
 
-    var streamsWithDeps = _mapValues2['default'](streamsDefs, function (streamFn) {
+    var streamsWithDeps = (0, _mapValues2['default'])(streamsDefs, function (streamFn) {
         return {
-            dependencies: _getParametersNames2['default'](streamFn),
-            stream: _createStream.createStream(streamFn)
+            dependencies: (0, _getParameterNames2['default'])(streamFn),
+            stream: (0, _cyclejsStream2['default'])(streamFn)
         };
     });
 
-    var group = _mapValues2['default'](streamsWithDeps, function (_ref) {
+    var group = (0, _mapValues2['default'])(streamsWithDeps, function (_ref) {
         var stream = _ref.stream;
         return stream;
     });

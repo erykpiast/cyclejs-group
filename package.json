@@ -18,13 +18,14 @@
   "main": "dist/create-group.js",
   "dependencies": {
     "core-js": "^0.9.6",
+    "cyclejs-stream": "erykpiast/cyclejs-stream",
     "foreach": "^2.0.5",
     "get-parameter-names": "^0.2.0",
     "map-values": "^1.0.1",
     "merge-object": "^1.0.0"
   },
   "peerDependencies": {
-    "cyclejs": ">=0.20"
+    "cyclejs": ">=0.21"
   },
   "devDependencies": {
     "babel": "~5.2",
@@ -35,7 +36,7 @@
     "mocha": "~2.2",
     "chai": "~2.3",
     "uglify-js": "~2.4",
-    "cyclejs": "~0.20"
+    "cyclejs": "~0.21"
   },
   "engines": {
     "node": ">=0.10.0"

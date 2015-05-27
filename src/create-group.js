@@ -2,7 +2,7 @@
 
 import 'core-js/fn/object/entries';
 
-import { createStream } from 'cyclejs';
+import createStream from 'cyclejs-stream';
 import mapValues from 'map-values';
 import mergeObjects from 'merge-object';
 import getParametersNames from 'get-parameter-names';
@@ -19,8 +19,10 @@ function _makeInjectFn(streamWithDependencies) {
                 if(!combinedInputObject.hasOwnProperty(dependencyName)) {
                     throw new Error(`Dependency "${dependencyName}" is not available!`);
                 }
-
-                return combinedInputObject[dependencyName];
+                
+                // shareReplay is here for circural dependent streams
+                // otherwise there will be endless loop of subscribing
+                return combinedInputObject[dependencyName].shareReplay(1);
             });
 
             stream.inject(...streamDependencies);
