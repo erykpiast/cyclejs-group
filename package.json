@@ -1,6 +1,6 @@
 {
   "name": "cyclejs-group",
-  "version": "0.3.7",
+  "version": "0.4.0",
   "author": "Eryk Napierala",
   "description": "Utility for CycleJS framework for reducing boilerplate when creating groups of streams",
   "license": "MIT",
