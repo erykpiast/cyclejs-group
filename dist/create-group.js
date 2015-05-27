@@ -54,10 +54,11 @@ function _makeInjectFn(streamWithDependencies) {
                         throw new Error('Dependency "' + dependencyName + '" is not available!');
                     }
 
-                    return combinedInputObject[dependencyName];
+                    // shareReplay is here for circural dependent streams
+                    // otherwise there will be endless loop of subscribing
+                    return combinedInputObject[dependencyName].shareReplay(1);
                 });
 
-                debugger;
                 stream.inject.apply(stream, _toConsumableArray(streamDependencies));
             }
         } catch (err) {
