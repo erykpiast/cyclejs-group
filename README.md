@@ -9,7 +9,8 @@ Usually in a Cycle.js application or component you want to create more than one 
 Let's say, you want to create simple application, that allows you to add two numbers. With pure Cycle.js you can do it like this:
 
 ```javascript
-import { createStream, render, h, Rx } from 'cyclejs';
+import { render, h, Rx } from 'cyclejs';
+import createStream from 'cyclejs-stream';
 
 let a$ = createStream((changeA$) => changeA$
     .map(value => parseInt(value, 10))
@@ -78,7 +79,7 @@ changeB$.inject(interaction$);
 Seems easy for now, but when streams number grows, amount of boilerplate will grow proportionally. With `createGroup` you can achieve the same effect in more compact way and create batch of streams from plain functions. Thanks to `inject` method of the group, you can make streams form one group available for streams from another one. Connection is detected based on names of function parameters and keys of the group object.
 
 ```javascript
-import { createStream, render, h, Rx } from 'cyclejs';
+import { render, h, Rx } from 'cyclejs';
 import createGroup from 'cyclejs-group';
 
 let model = createGroup({
