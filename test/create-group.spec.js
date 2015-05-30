@@ -72,6 +72,40 @@ suite('Groups', () => {
         group.inject(inputs);
     });
     
+    test('should ignore sorrounding underscores in function parameter name when injecting dependencies', (done) => {
+        let group = createGroup({
+            foo$: (asd$_) => asd$_.map(x => 3 * x),
+            bar$: (_lol$) => _lol$.map(x => 5 * x)
+        });
+        let inputs = {
+            asd$: Rx.Observable.just(2),
+            lol$: Rx.Observable.just(4)
+        };
+
+        Rx.Observable.combineLatest(group.foo$, group.bar$, (foo, bar) => [foo, bar])
+        .subscribe(([foo, bar]) => {
+            assert.strictEqual(foo, 6);
+            assert.strictEqual(bar, 20);
+            done();
+        });
+        group.inject(inputs);
+    });
+    
+    test('should not ignore underscores inside function parameter name when injecting dependencies', () => {
+        let group = createGroup({
+            foo$: (a_s_d$) => a_s_d$.map(x => 3 * x),
+            bar$: (_lol$_) => _lol$_.map(x => 5 * x)
+        });
+        let inputs = {
+            asd$: Rx.Observable.just(2),
+            lol$: Rx.Observable.just(4)
+        };
+
+        assert.throws(() => {
+            group.inject(inputs)
+        }, /dependency "a_s_d\$" is not available/i);
+    });
+    
     test('should be injectable with another Group', (done) => {
         let group1 = createGroup({
             foo$: (asd$) => asd$.map(x => 3 * x),
