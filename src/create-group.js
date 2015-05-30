@@ -8,6 +8,13 @@ import mergeObjects from 'merge-object';
 import getParametersNames from 'get-parameter-names';
 
 
+function _removeUnderscores(string) {
+    let result = /^_*(.*[^_])_*$/.exec(string);
+
+    return result ? result[1] : string;
+}
+
+
 function _makeInjectFn(streamWithDependencies) {
     return function inject(...inputObjects) {
         let combinedInputObject = inputObjects.length === 1 ?
@@ -64,7 +71,8 @@ export default function createGroup(definition) {
     }
 
     let streamsWithDeps = mapValues(streamsDefs, (streamFn) => ({
-        dependencies: getParametersNames(streamFn),
+        dependencies: getParametersNames(streamFn)
+            .map(_removeUnderscores),
         stream: createStream(streamFn)
     }));
 
