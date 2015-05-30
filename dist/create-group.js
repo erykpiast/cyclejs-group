@@ -29,6 +29,12 @@ var _getParameterNames = require('get-parameter-names');
 
 var _getParameterNames2 = _interopRequireDefault(_getParameterNames);
 
+function _removeUnderscores(string) {
+    var result = /^_*(.*[^_])_*$/.exec(string);
+
+    return result ? result[1] : string;
+}
+
 function _makeInjectFn(streamWithDependencies) {
     return function inject() {
         for (var _len = arguments.length, inputObjects = Array(_len), _key = 0; _key < _len; _key++) {
@@ -131,7 +137,7 @@ function createGroup(definition) {
 
     var streamsWithDeps = (0, _mapValues2['default'])(streamsDefs, function (streamFn) {
         return {
-            dependencies: (0, _getParameterNames2['default'])(streamFn),
+            dependencies: (0, _getParameterNames2['default'])(streamFn).map(_removeUnderscores),
             stream: (0, _cyclejsStream2['default'])(streamFn)
         };
     });
