@@ -71,7 +71,7 @@ suite('Groups', () => {
         });
         group.inject(inputs);
     });
-    
+
     test('should ignore sorrounding underscores in function parameter name when injecting dependencies', (done) => {
         let group = createGroup({
             foo$: (asd$_) => asd$_.map(x => 3 * x),
@@ -90,7 +90,7 @@ suite('Groups', () => {
         });
         group.inject(inputs);
     });
-    
+
     test('should not ignore underscores inside function parameter name when injecting dependencies', () => {
         let group = createGroup({
             foo$: (a_s_d$) => a_s_d$.map(x => 3 * x),
@@ -105,7 +105,7 @@ suite('Groups', () => {
             group.inject(inputs)
         }, /dependency "a_s_d\$" is not available/i);
     });
-    
+
     test('should be injectable with another Group', (done) => {
         let group1 = createGroup({
             foo$: (asd$) => asd$.map(x => 3 * x),
@@ -123,7 +123,7 @@ suite('Groups', () => {
         ).subscribe(([foo, bar]) => {
             assert.strictEqual(foo, 6);
             assert.strictEqual(bar, 20);
-            
+
             done();
         });
 
@@ -132,15 +132,14 @@ suite('Groups', () => {
 
     test('should be circularly injectable with another Group', (done) => {
         let group1 = createGroup({
-            foo$: (asd$) => asd$
-                .map(x => 3 * x)
-                .startWith(3)
-                .delay(1)
+            foo$: (asd$) =>
+                asd$.map(x => 3 * x)
+                .merge(Rx.Observable.just(3).delay(5))
         });
 
         let group2 = createGroup({
-            asd$: (foo$) => foo$
-                .map(x => 5 * x)
+            asd$: (foo$) =>
+                foo$.map(x => 5 * x)
         });
 
         group2.asd$.elementAt(1).subscribe(x => {

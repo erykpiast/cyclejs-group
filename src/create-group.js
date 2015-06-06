@@ -29,7 +29,7 @@ function _makeInjectFn(streamWithDependencies) {
                 
                 // shareReplay is here for circural dependent streams
                 // otherwise there will be endless loop of subscribing
-                return combinedInputObject[dependencyName].shareReplay(1);
+                return combinedInputObject[dependencyName];
             });
 
             stream.inject(...streamDependencies);

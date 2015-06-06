@@ -18,7 +18,7 @@
   "main": "dist/create-group.js",
   "dependencies": {
     "core-js": "^0.9.6",
-    "cyclejs-stream": "erykpiast/cyclejs-stream",
+    "cyclejs-stream": "^0.4.0",
     "foreach": "^2.0.5",
     "get-parameter-names": "^0.2.0",
     "map-values": "^1.0.1",
