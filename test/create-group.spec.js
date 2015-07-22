@@ -3,9 +3,10 @@
 import chai from 'chai';
 import { assert } from 'chai';
 
-import { Rx } from 'cyclejs';
+import { Rx } from '@cycle/core';
 
 import createGroup from '../src/create-group';
+
 
 suite('createGroup', () => {
 
@@ -145,13 +146,51 @@ suite('Groups', () => {
         group2.asd$.elementAt(1).subscribe(x => {
             assert.strictEqual(x, 3 * 5 * 3 * 5);
 
-            done();
-
             group1.dispose();
             group2.dispose();
+
+            done();
         });
 
         group2.inject(group1).inject(group2);
+    });
+
+    test('should be circularly injectable with itself', (done) => {
+        let group = createGroup({
+            foo$: (asd$) =>
+                asd$.map(x => 3 * x)
+                .merge(Rx.Observable.just(3).delay(5)),
+            asd$: (foo$) =>
+                foo$.map(x => 5 * x)
+        });
+
+        group.asd$.elementAt(1).subscribe(x => {
+            assert.strictEqual(x, 3 * 5 * 3 * 5);
+
+            group.dispose();
+
+            done();
+        });
+
+        group.inject(group);
+    });
+
+    test('should streams in group be circularly injectable with itself', (done) => {
+        let group = createGroup({
+            foo$: (foo$) =>
+                foo$.map(x => 3 * x).startWith(3)
+        });
+
+
+        group.foo$.elementAt(2).subscribe(x => {
+            assert.strictEqual(x, 3 * 3 * 3);
+
+            group.dispose();
+
+            done();
+        });
+
+        group.inject(group);
     });
 
     test('should not operate after dispose() has been called', (done) => {
@@ -167,6 +206,7 @@ suite('Groups', () => {
         setTimeout(() => { group.dispose(); }, 200);
         setTimeout(() => { done(); }, 400);
     });
+
 
     suite('injection', () => {
 
@@ -187,7 +227,6 @@ suite('Groups', () => {
             assert.strictEqual(outputs.asd$, inputs.asd$);
             assert.strictEqual(outputs.lol$, inputs.lol$);
         });
-
 
         test('should return an array when given multiple inputs', () => {
             let group = createGroup({
