@@ -14,7 +14,8 @@ Let's say, you want to create simple application, that allows you to add two num
 With pure Cycle.js and [cyclejs-stream](https://github.com/erykpiast/cyclejs-stream) you can do it like this:
 
 ```javascript
-import { applyToDOM, h, Rx } from 'cyclejs';
+import { Rx, run } from '@cycle/core';
+import { makeDOMDriver, h } from '@cycle/dom';
 import createStream from 'cyclejs-stream';
 
 let a$ = createStream((changeA$) =>
@@ -76,16 +77,19 @@ let changeA$ = createStream((interactions) =>
     .map(({ target }) => target.value)
 );
 
-applyToDOM('.js-container', (interactions) => {
+run(({ DOM } => {
   a$.inject(changeA$);
   b$.inject(changeB$);
   c$.inject(a$, b$);
   vtree$.inject(a$, b$, c$);
-  interactions.inject(vtree$);
-  changeA$.inject(interactions);
-  changeB$.inject(interactions);
-
-  return vtree$;
+  changeA$.inject(DOM);
+  changeB$.inject(DOM);
+  
+  return {
+    DOM: vtree$
+  };
+}, {
+  dom: makeDomDriver('.js-container')
 });
 
 ```
@@ -158,11 +162,15 @@ let view = createGroup({
     )
 });
 
-applyToDOM('.js-container', (interactions) => {
+run(({ DOM } => {
   model.inject(intent, model); // self-injection to make a$ and b$ available for c$
   view.inject(model);
-  intent.inject({ interactions });
+  intent.inject({ interactions: DOM });
 
-  return view.vtree$;
+  return {
+    DOM: view.vtree$
+  };
+}, {
+  dom: makeDomDriver('.js-container')
 });
 ```
