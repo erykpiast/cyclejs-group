@@ -77,7 +77,7 @@ let changeA$ = createStream((interactions) =>
     .map(({ target }) => target.value)
 );
 
-run(({ DOM } => {
+run(({ DOM }) => {
   a$.inject(changeA$);
   b$.inject(changeB$);
   c$.inject(a$, b$);
@@ -163,7 +163,7 @@ let view = createGroup({
     )
 });
 
-run(({ DOM } => {
+run(({ DOM }) => {
   model.inject(intent, model); // self-injection to make a$ and b$ available for c$
   view.inject(model);
   intent.inject({ interactions: DOM });
