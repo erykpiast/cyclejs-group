@@ -101,7 +101,8 @@ Connection is detected based on names of function parameters and keys of the gro
 streams can help with separation of concerns and increase readability of your code.
 
 ```javascript
-import { applyToDOM, h, Rx } from 'cyclejs';
+import { Rx, run } from '@cycle/core';
+import { makeDOMDriver, h } from '@cycle/dom';
 import createGroup from 'cyclejs-group';
 
 let model = createGroup({
